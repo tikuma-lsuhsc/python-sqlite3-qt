@@ -1,0 +1,120 @@
+name: Run Tests
+
+on:
+  push:
+    branches:
+      - "main"
+    tags:
+      - "v*.*.*"
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  tests:
+    name: Python ${{ matrix.python-version }} • ${{ matrix.os }} • ${{ matrix.qt-module }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        python-version: ["3.12"]
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        qt-module: [PyQt6, PySide6, PyQt5] #, PySide2 <- doesn't work
+        include:
+          - os: ubuntu-latest
+            python-version: 3.8
+            qt-module: PyQt6
+          - os: ubuntu-latest
+            python-version: 3.9
+            qt-module: PyQt6
+          - os: ubuntu-latest
+            python-version: "3.10"
+            qt-module: PyQt6
+          - os: ubuntu-latest
+            python-version: "3.11"
+            qt-module: PyQt6
+
+    steps:
+      - run: echo ${{github.ref}}
+
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies for Ubuntu QtSql
+        if: runner.os == 'Linux'
+        run: |
+          id -a
+          sudo apt-get -y install libxkbcommon-x11-0 libegl1
+
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          # architecture: ${{ matrix.arch }}
+
+      - name: Setup Python dependencies
+        run: |
+          python -m pip install -U pip setuptools wheel 
+          pip install -U pytest pytest-github-actions-annotate-failures 
+          
+      - name: Install ${{ matrix.qt-module }} Module
+        run: |
+          pip install -U ${{ matrix.qt-module }}
+        # pip uninstall -y PyQt6 PySide6 PyQt5 PySide2
+  
+      - name: Install sqlite3-qt package
+        run: pip install -q .
+
+      - name: Run tests
+        run: pytest -vv
+
+  build:
+    name: Build distribution
+    runs-on: ubuntu-latest
+    needs: [tests]
+    if: startsWith(github.ref, 'refs/tags')
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x" # Version range or exact version of a Python version to use, using SemVer's version range syntax
+
+      - name: Setup Python dependencies
+        run: |
+          python -m pip install -U pip setuptools build
+
+      - name: Build a binary wheel and a source tarball
+        run: python -m build --sdist --wheel --outdir dist/ .
+
+      - name: add python distribution files to release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Store the distribution packages
+        uses: actions/upload-artifact@v3
+        with:
+          name: python-package-distributions
+          path: dist/
+
+  publish-to-pypi:
+    name: >-
+      Publish Python 🐍 distribution 📦 to PyPI
+    if: startsWith(github.ref, 'refs/tags/')  # only publish to PyPI on tag pushes
+    needs:
+    - build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/sqlite3-qt  # Replace <package-name> with your PyPI project name
+    permissions:
+      id-token: write  # IMPORTANT: mandatory for trusted publishing
+    steps:
+      - name: Download all the dists
+        uses: actions/download-artifact@v3
+        with:
+          name: python-package-distributions
+          path: dist/
+      - name: Publish distribution 📦 to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1

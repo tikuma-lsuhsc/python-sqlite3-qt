@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "sqlite3-qt"
 description = "Drop-in Qt-based replacement for the sqlite3 module"
-readme = "README.md"
+readme = "README.rst"
 keywords = ["sqlite3", "Qt"]
 license = { text = "GPL-3.0 License" }
 classifiers = [
@@ -21,7 +21,7 @@ classifiers = [
 ]
 dynamic = ["version"]
 requires-python = ">=3.8"
-dependencies = ["packaging"]
+dependencies = ["packaging", "typing-extensions"]
 
 [project.urls]
 Repository = "https://github.com/tikuma-lsuhsc/python-sqlite3-qt"
@@ -30,6 +30,6 @@ Repository = "https://github.com/tikuma-lsuhsc/python-sqlite3-qt"
 version = { attr = "sqlite3_qt.__version__" }
 
 [tool.pytest.ini_options]
-# testpaths = ["tests"]
+testpaths = ["tests",]
 # minversion = "6.0"
 # addopts = "-ra -q"
