@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools >= 61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "sqlite3-qt"
+description = "Drop-in Qt-based replacement for the sqlite3 module"
+readme = "README.md"
+keywords = ["sqlite3", "Qt"]
+license = { text = "GPL-3.0 License" }
+classifiers = [
+    "Development Status :: 1 - Planning",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Topic :: Database",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dynamic = ["version"]
+requires-python = ">=3.8"
+dependencies = ["packaging"]
+
+[project.urls]
+Repository = "https://github.com/tikuma-lsuhsc/python-sqlite3-qt"
+
+[tool.setuptools.dynamic]
+version = { attr = "sqlite3_qt.__version__" }
+
+[tool.pytest.ini_options]
+# testpaths = ["tests"]
+# minversion = "6.0"
+# addopts = "-ra -q"

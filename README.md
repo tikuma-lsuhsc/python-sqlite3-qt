@@ -1,0 +1,1 @@
+# sqlite3-qt - Drop-in Qt-based replacement for the sqlite3 module
