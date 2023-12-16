@@ -16,14 +16,13 @@
   :alt: PyPI - Python Version
 .. |github-license| image:: https://img.shields.io/github/license/tikuma-lsuhsc/python-sqlite3-qt
   :alt: GitHub License
-
-.. .. |github-status| image:: https://img.shields.io/github/workflow/status/python-sqlite3-qt/python-sqlite3-qt/Run%20Tests
-..   :alt: GitHub Workflow Status
+.. |github-status| image:: https://img.shields.io/github/workflow/status/python-sqlite3-qt/python-sqlite3-qt/test_n_pub
+  :alt: GitHub Workflow Status
 
 About SQLite3-Qt
 ~~~~~~~~~~~~~~~~
 
-It is a drop-in module for `Python's sqlite3 built-in module`_, providing basic 
+A drop-in module for `Python's sqlite3 built-in module`_, providing basic 
 functionality via `Qt SQL module`_. The goal is to enable the creation of a SQL backend module 
 which can support both script and UI frontends.
 
@@ -55,6 +54,7 @@ Features
 
 .. |QSqlDatabase| replace:: ``QSqlDatabase``
 .. |QSqlQuery| replace:: ``QSqlQuery``
+.. |PySide2| replace:: ``PySide2``
 
 - Access Qt's QSqlDatabase_ name and QSqlQuery_ objects
 
@@ -63,7 +63,11 @@ Features
     sqlite3_qt.Connection.qt_name # to get the QSqlDatabase name
     sqlite3_qt.Cursor.qt_query # to access the underlying QSqlQuery object
 
-- Auto-detect ``PyQt6`` / ``PySide6`` / ``PyQt5`` / ``PySide5``. (Caveat: Only ``PyQt6`` has been tested.)
+.. role:: strike
+    :class: strike
+
+
+- Auto-detect ``PyQt6`` / ``PySide6`` / ``PyQt5`` / :strike:`PySide2` (`PySide2` fails the Github CI test)
    
 .. _QSqlDatabase: https://doc.qt.io/qt-6/qsqldatabase.html
 .. _QSqlQuery: https://doc.qt.io/qt-6/qsqlquery.html
